@@ -1,6 +1,5 @@
 package www.bit.java.util;
 
-
 class Solution {
     public ListNode reverseList(ListNode head) {
         if(head == null){
