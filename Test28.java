@@ -1,4 +1,4 @@
-package www.bit.java;
+﻿package www.bit.java;
 
 import java.util.Arrays;
 
@@ -21,18 +21,19 @@ import java.util.Arrays;
  */
 class Solution {
     public boolean isPowerOfTwo(int n) {
-        if(n <= 0){
-            return false;
-        }
-        while(n > 1){
-            if(n % 2 != 0){
-                return false;
-            }
-            else{
-                n = n/2;
-            }
-        }
-        return n==1;
+//        if(n <= 0){
+//            return false;
+//        }
+//        while(n > 1){
+//            if(n % 2 != 0){
+//                return false;
+//            }
+//            else{
+//                n = n/2;
+//            }
+//        }
+//        return n==1;
+        return n>0 && (n & n-1)==0;
     }
 }
 
