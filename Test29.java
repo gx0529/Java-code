@@ -1,6 +1,4 @@
-package www.bit.java;
-
-import java.util.Arrays;
+﻿package www.bit.java;
 
 /**
  * 给定一个非负整数 c ，你要判断是否存在两个整数 a 和 b，使得 a2 + b2 = c。
