@@ -1,4 +1,4 @@
-package www.bit.java;
+﻿package www.bit.java;
 
 
 import java.util.Arrays;
@@ -27,9 +27,12 @@ class Solution {
 public class Test2{
     public static void main(String[] args) {
         Solution solution = new Solution();
-        int[] nums1 = new int[]{1,2,3,0,0,0};
+        int[] nums1 = new int[6];
+        nums1[0] = 1;
+        nums1[1] = 2;
+        nums1[2] = 3;
         int[] nums2 = new int[]{2,5,6};
-        solution.merge(nums1,nums1.length,nums2,nums2.length);
+        solution.merge(nums1,3,nums2,nums2.length);
         for(int tmp : nums1){
             System.out.println(tmp);
         }
