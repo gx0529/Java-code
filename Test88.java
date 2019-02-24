@@ -18,37 +18,41 @@
 向右旋转 3 步: 0->1->2->NULL
 向右旋转 4 步: 2->0->1->NULL
 
+
+
 class Solution {
     public ListNode rotateRight(ListNode head, int k) {
+        //如果头结点没空或者k为0则直接返回头结点
         if(head == null || k == 0){
             return head;
         }
-        ListNode left = head;
-        ListNode right = head;
-        ListNode res;
-        int idx = 0;
-        while (right != null) {
-            idx++;
-            right = right.next;
+        ListNode cur = head;
+        int count = 0;
+        //先计算出节点个数
+        while(cur != null){
+            count++;
+            cur = cur.next;
         }
-        right = head;
-        k = k  % idx;
-        idx = 0;
-        while (idx != k) {
-            if (right == null)
-                right = head;            
-            idx++;
-            right = right.next;            
+        //如果k正好是节点的倍数，相当于不用旋转
+        if(k % count == 0){
+            return head;
         }
-        if (right == null)
-            right = head;        
-        while (right.next != null) {
-            right = right.next;
-            left = left.next;
+        //计算出最小的旋转次数
+        k = k % count;
+        cur = head;
+        //找到被旋转部分的前一个节点
+        for(int i=0; i<count-k-1; i++){
+            cur = cur.next;
         }
-        right.next = head;
-        res = left.next;
-        left.next = null;
-        return res;
+        ListNode temp = cur.next;
+        cur.next = null;
+        cur = temp;
+        //找到旋转部分的最后一个节点
+        while(temp.next != null){
+            temp = temp.next;
+        }
+        //直接将旋转部分的最后一个节点的next赋为头节点
+        temp.next = head;
+        return cur;
     }
 }
