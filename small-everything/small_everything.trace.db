@@ -1,0 +1,27 @@
+2019-03-01 13:47:27 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "INSERT INTO FILE_INDEX(NAME, PATH, DEPTH, FILE_TYPE) VALUE[*] (?,?,?,?) "; expected "DIRECT, SORTED, DEFAULT, VALUES, SET, (, WITH, SELECT, FROM"; SQL statement:
+insert into file_index(name, path, depth, file_type) value (?,?,?,?) [42001-197]
+2019-03-01 13:48:06 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "INSERT INTO FILE_INDEX(NAME, PATH, DEPTH, FILE_TYPE) VALUE[*] (?,?,?,?) "; expected "DIRECT, SORTED, DEFAULT, VALUES, SET, (, WITH, SELECT, FROM"; SQL statement:
+insert into file_index(name, path, depth, file_type) value (?,?,?,?) [42001-197]
+2019-03-01 14:07:01 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "INSERT INTO FILE_INDEX(NAME, PATH, DEPTH, FILE_TYPE) VALUE[*] (?,?,?,?) "; expected "DIRECT, SORTED, DEFAULT, VALUES, SET, (, WITH, SELECT, FROM"; SQL statement:
+insert into file_index(name, path, depth, file_type) value (?,?,?,?) [42001-197]
+2019-03-01 14:08:44 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "INSERT INTO FILE_INDEX(NAME, PATH, DEPTH, FILE_TYPE) VALUE[*] (?,?,?,?) "; expected "DIRECT, SORTED, DEFAULT, VALUES, SET, (, WITH, SELECT, FROM"; SQL statement:
+insert into file_index(name, path, depth, file_type) value (?,?,?,?) [42001-197]
+2019-03-01 14:10:38 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "INSERT INTO FILE_INDEX(NAME, PATH, DEPTH, FILE_TYPE) VALUE[*] (?,?,?,?) "; expected "DIRECT, SORTED, DEFAULT, VALUES, SET, (, WITH, SELECT, FROM"; SQL statement:
+insert into file_index(name, path, depth, file_type) value (?,?,?,?) [42001-197]
+2019-03-01 14:11:23 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "INSERT INTO FILE_INDEX(NAME, PATH, DEPTH, FILE_TYPE) VALUE[*] (?,?,?,?) "; expected "DIRECT, SORTED, DEFAULT, VALUES, SET, (, WITH, SELECT, FROM"; SQL statement:
+insert into file_index(name, path, depth, file_type) value (?,?,?,?) [42001-197]
+2019-03-01 14:11:59 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "INSERT INTO FILE_INDEX(NAME, PATH, DEPTH, FILE_TYPE) VALUE[*] (?,?,?,?) "; expected "DIRECT, SORTED, DEFAULT, VALUES, SET, (, WITH, SELECT, FROM"; SQL statement:
+insert into file_index(name, path, depth, file_type) value (?,?,?,?) [42001-197]
+2019-03-01 14:17:10 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "INSERT INTO FILE_INDEX(NAME, PATH, DEPTH, FILE_TYPE) VALUE[*] (?,?,?,?) "; expected "DIRECT, SORTED, DEFAULT, VALUES, SET, (, WITH, SELECT, FROM"; SQL statement:
+insert into file_index(name, path, depth, file_type) value (?,?,?,?) [42001-197]
+2019-03-01 14:49:24 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement " select name,path,depth,file_type from file_index  where  name like %简历%[*]' order by depth asc limit 1 offset 0"; SQL statement:
+ select name,path,depth,file_type from file_index  where  name like %简历%' order by depth asc limit 1 offset 0 [42000-197]
