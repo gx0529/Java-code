@@ -6,8 +6,9 @@ import com.core.dao.FileIndexDao;
 import com.core.dao.impl.FileIndexDaoImpl;
 import com.core.index.FileScan;
 import com.core.index.impl.FileScanImpl;
+import com.core.interceptor.ThingInterceptor;
 import com.core.interceptor.impl.FileIndexInterceptor;
-import com.core.interceptor.impl.FilePrintInterceptor;
+import com.core.interceptor.impl.ThingClearInterceptor;
 import com.core.model.Condition;
 import com.core.model.Thing;
 import com.core.search.FileSearch;
@@ -21,7 +22,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class SmallEverythingManager {
     private static volatile SmallEverythingManager manager;
@@ -32,10 +35,17 @@ public class SmallEverythingManager {
 
     private ExecutorService executorService;
 
+    /**
+     * 清理删除的文件
+     */
+    private ThingClearInterceptor thingClearInterceptor;
+    private Thread backgroundClearThread;
+
+    private AtomicBoolean backgroundClearThreadStatus = new AtomicBoolean(false);
+
     private SmallEverythingManager(){
         this.initComponent();
     }
-
     private void initComponent(){
         //数据源对象
         DataSource dataSource = DataSourceFactory.dataSource();
@@ -43,26 +53,30 @@ public class SmallEverythingManager {
         /**
          * 检查数据库
          */
-        checkDatabase();
+        initOrResetDatabase();
 
 
         //业务层对象
         FileIndexDao fileIndexDao = new FileIndexDaoImpl(dataSource);
         this.fileSearch = new FileSearchImpl(fileIndexDao);
         this.fileScan = new FileScanImpl();
-        this.fileScan.interceptor(new FilePrintInterceptor());
+
+        //Print真正发布代码不需要
+        //this.fileScan.interceptor(new FilePrintInterceptor());
         this.fileScan.interceptor(new FileIndexInterceptor(fileIndexDao));
+
+        this.thingClearInterceptor = new ThingClearInterceptor(fileIndexDao);
+
+        this.backgroundClearThread = new Thread(this.thingClearInterceptor);
+
+        this.backgroundClearThread.setName("Thread-Thing-Clear");
+        this.backgroundClearThread.setDaemon(true);
     }
 
-    private void checkDatabase(){
-        String workDir = System.getProperty("user.dir");
-        String fileName = workDir+ File.separator+".mv.db";
-        File dbFile = new File(fileName);
-        if(dbFile.isFile() && !dbFile.exists()){
-            DataSourceFactory.initDatabase();
-        }
-    }
 
+    public void initOrResetDatabase(){
+        DataSourceFactory.initDatabase();
+    }
     public static SmallEverythingManager getInstance(){
         if(manager == null){
             synchronized (SmallEverythingManager.class){
@@ -78,13 +92,26 @@ public class SmallEverythingManager {
      */
     public List<Thing> search(Condition condition){
         // NOTICE扩展
-        return this.fileSearch.search(condition);
+        //Stream
+        return this.fileSearch.search(condition).stream().
+                filter(thing -> {
+                    String path = thing.getPath();
+                    File f = new File(path);
+                    boolean flag = f.exists();
+
+                    if(!flag){
+                        //不存在删掉，做删除操作
+                        thingClearInterceptor.apply(thing);
+                    }
+                    return flag;
+                }).collect(Collectors.toList());
     }
 
     /**
      * 索引
      */
     public void buildIndex(){
+        initOrResetDatabase();
         Set<String> directories = SmallEverythingConfig.getInstance().getIncludePath();
         if(this.executorService == null){
             this.executorService = Executors.newFixedThreadPool(directories.size(), new ThreadFactory() {
@@ -121,5 +148,16 @@ public class SmallEverythingManager {
             e.printStackTrace();
         }
         System.out.println("Build index complete...");
+    }
+
+    /**
+     * 启动清理线程
+     */
+    public void startBackgroundClearThread(){
+        if(this.backgroundClearThreadStatus.compareAndSet(false,true)){
+            this.backgroundClearThread.start();
+        }else{
+            System.out.println("Cant repeat start BackgroundClearThread");
+        }
     }
 }

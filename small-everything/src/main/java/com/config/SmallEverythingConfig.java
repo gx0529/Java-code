@@ -1,6 +1,8 @@
 package com.config;
 
 import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.File;
 import java.nio.file.FileSystem;
@@ -10,12 +12,43 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
+@ToString
 public class SmallEverythingConfig {
 
     private static volatile SmallEverythingConfig config;
 
+    /**
+     * 建立索引的路径
+     */
+    private Set<String> includePath = new HashSet<>();
+
+    /**
+     * 排除索引文件的路径
+     */
+
+    private Set<String> excludePath = new HashSet<>();
+
+    //TODO 可配置的参数会在这里体现
+    /**
+     * 检索最大的返回值数量
+     */
+    @Setter
+    private Integer maxReturn = 30;
+
+    /**
+     * 深度排序规则，默认是升序
+     * order by dept asc limit 30 offset 0
+     */
+    @Setter
+    private Boolean deptOrderAsc = true;
+
+    /**
+     * H2数据库文件路径
+     */
+    private String h2IndexPath =
+            System.getProperty("user.dir")+ File.separator+"small_everything";
+
     private SmallEverythingConfig(){
-        this.initDefaultPathsConfig();
     }
 
     private void initDefaultPathsConfig(){
@@ -24,7 +57,7 @@ public class SmallEverythingConfig {
 
         //遍历目录
         Iterable<Path> iterable = fileSystem.getRootDirectories();
-        iterable.forEach(path -> config.getIncludePath().add(path.toString()));
+        iterable.forEach(path -> config.includePath.add(path.toString()));
 
         //排除目录
         //windows : C:\Windows  C:\Program Files (x86)  C:\Program Files  C:\ProgramData
@@ -42,27 +75,13 @@ public class SmallEverythingConfig {
         }
     }
 
-    /**
-     * 建立索引的路径
-     */
-    private Set<String> includePath = new HashSet<>();
 
-    /**
-     * 排除索引文件的路径
-     */
-    private Set<String> excludePath = new HashSet<>();
-
-    //TODO 可配置的参数会在这里体现
-
-    /**
-     * H2数据库文件路径
-     */
-    private String h2IndexPath = System.getProperty("user.dir")+ File.separator+"small_everything";
     public static SmallEverythingConfig getInstance(){
         if(config == null){
             synchronized (SmallEverythingConfig.class){
                 if(config == null){
                     config = new SmallEverythingConfig();
+                    config.initDefaultPathsConfig();
                 }
             }
         }

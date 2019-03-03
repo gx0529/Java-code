@@ -1,26 +1,91 @@
 package com.cmd;
 
+import com.config.SmallEverythingConfig;
 import com.core.SmallEverythingManager;
 import com.core.model.Condition;
+import com.core.model.Thing;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class EverythingPlusCmdApp {
     private static Scanner scanner = new Scanner(System.in);
     public static void main(String[] args) {
+        //解析参数
+        parseParams(args);
+
         //欢迎
         welcome();
 
         //统一调度器
         SmallEverythingManager manager = SmallEverythingManager.getInstance();
 
+        //启动后台清理线程
+        manager.startBackgroundClearThread();
+
         //交互式
         interactive(manager);
     }
 
+    private static void parseParams(String[] args){
+        SmallEverythingConfig config = SmallEverythingConfig.getInstance();
+        for(String param : args){
+            String maxReturnParam = "--maxReturn=";
+            /**
+             * 处理参数
+             * 如果用户指定的参数格式不对，使用默认值即可
+             */
+            if(param.startsWith("--maxReturn=")){
+                //--maxReturn=value
+                int index = param.indexOf("=");
+                String maxReturnStr = param.substring(index + 1);
+                try{
+                    int maxReturn = Integer.parseInt(maxReturnStr);
+                    config.setMaxReturn(maxReturn);
+                }catch (NumberFormatException e){
+                    //如果用户指定的参数格式不对，使用默认值即可
+                }
+            }
+
+            String deptOrderByAscParam = "--deptOrderByAsc=";
+            if(param.startsWith(deptOrderByAscParam)){
+                //--deptOrderByAsc=value
+                int index = param.indexOf("=");
+                String deptOrderByAscStr = param.substring(index + 1);
+                config.setDeptOrderAsc(Boolean.parseBoolean(deptOrderByAscStr));
+            }
+
+            String includePathParam = "--includePath=";
+            if(param.startsWith(includePathParam)){
+                //--includePath=values
+                int index = param.indexOf("=");
+                String includePathStr = param.substring(index + 1);
+                String[] includePaths = includePathStr.split(";");
+                if(includePaths.length > 0) {
+                    config.getIncludePath().clear();
+                }
+                for(String p : includePaths){
+                    config.getIncludePath().add(p);
+                }
+            }
+
+            String excludePathParam = "--excludePath=";
+            if(param.startsWith(excludePathParam)){
+                //--excludePath=values
+                int index = param.indexOf("=");
+                String excludePathStr = param.substring(index + 1);
+                String[] excludePaths = excludePathStr.split(";");
+                config.getExcludePath().clear();
+                for(String p : excludePaths){
+                    config.getExcludePath().add(p);
+                }
+            }
+        }
+    }
+
     private static void interactive(SmallEverythingManager manager){
         while(true){
-            System.out.println("everything >>");
+            System.out.print("everything >> ");
             String input = scanner.nextLine();
             //优先处理search
             if(input.startsWith("search")){
@@ -47,15 +112,29 @@ public class EverythingPlusCmdApp {
             }
             switch (input){
                 case "help":
+                    help();
+                    break;
+                case "quit":
+                    quit();
+                    break;
+                case "index":
+                    index(manager);
+                    break;
+                default:
+                    help();
             }
         }
     }
 
     private static void search(SmallEverythingManager manager,Condition condition){
-        System.out.println("检索功能");
         //统一调度器中的search
         //name fileType limit orderByAsc
-        manager.search(condition);
+        condition.setLimit(SmallEverythingConfig.getInstance().getMaxReturn());
+        condition.setOrderByAsc(SmallEverythingConfig.getInstance().getDeptOrderAsc());
+        List<Thing> thingList = manager.search(condition);
+        for(Thing thing : thingList){
+            System.out.println(thing.getPath());
+        }
     }
 
     private static void index(SmallEverythingManager manager){
@@ -68,7 +147,8 @@ public class EverythingPlusCmdApp {
         }).start();
     }
     private static void quit(){
-
+        System.out.println("再见");
+        System.exit(0);
     }
 
     private static void welcome(){
@@ -76,6 +156,10 @@ public class EverythingPlusCmdApp {
     }
 
     private static void help(){
-
+        System.out.println("命令列表：");
+        System.out.println("退出：quit");
+        System.out.println("帮助：help");
+        System.out.println("索引：index");
+        System.out.println("搜索：search <name> [<file-Type> img | doc | bin | archive | others]");
     }
 }
