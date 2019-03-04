@@ -29,8 +29,7 @@ public class FileIndexDaoImpl implements FileIndexDao {
             //1.获取数据库连接
             connection = dataSource.getConnection();
             //2.准备SQL语句
-            String sql = "insert into file_index(name, path, depth, file_type) " +
-                    "values (?,?,?,?)";
+            String sql = "insert into file_index(name, path, depth, file_type) values (?,?,?,?)";
             //3.准备命令
             statement = connection.prepareStatement(sql);
             //4.设置参数

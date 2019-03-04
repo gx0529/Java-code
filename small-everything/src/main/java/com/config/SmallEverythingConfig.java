@@ -57,7 +57,9 @@ public class SmallEverythingConfig {
 
         //遍历目录
         Iterable<Path> iterable = fileSystem.getRootDirectories();
-        iterable.forEach(path -> config.includePath.add(path.toString()));
+        for (Path path : iterable) {
+            config.includePath.add(path.toString());
+        }
 
         //排除目录
         //windows : C:\Windows  C:\Program Files (x86)  C:\Program Files  C:\ProgramData

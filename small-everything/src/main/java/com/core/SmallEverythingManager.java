@@ -1,6 +1,7 @@
 package com.core;
 
 import com.config.SmallEverythingConfig;
+import com.core.common.HandlePath;
 import com.core.dao.DataSourceFactory;
 import com.core.dao.FileIndexDao;
 import com.core.dao.impl.FileIndexDaoImpl;
@@ -11,6 +12,8 @@ import com.core.interceptor.impl.FileIndexInterceptor;
 import com.core.interceptor.impl.ThingClearInterceptor;
 import com.core.model.Condition;
 import com.core.model.Thing;
+import com.core.monitor.FileWatch;
+import com.core.monitor.impl.FileWatchImpl;
 import com.core.search.FileSearch;
 import com.core.search.impl.FileSearchImpl;
 
@@ -43,6 +46,11 @@ public class SmallEverythingManager {
 
     private AtomicBoolean backgroundClearThreadStatus = new AtomicBoolean(false);
 
+    /**
+     * 文件监控
+     */
+    private FileWatch fileWatch;
+
     private SmallEverythingManager(){
         this.initComponent();
     }
@@ -71,6 +79,9 @@ public class SmallEverythingManager {
 
         this.backgroundClearThread.setName("Thread-Thing-Clear");
         this.backgroundClearThread.setDaemon(true);
+
+        //FileWatch  文件监控对象
+        this.fileWatch = new FileWatchImpl(fileIndexDao);
     }
 
 
@@ -129,13 +140,10 @@ public class SmallEverythingManager {
 
         System.out.println("Build index start...");
         for(String path : directories){
-            this.executorService.submit(new Runnable() {
-                @Override
-                public void run() {
-                    SmallEverythingManager.this.fileScan.index(path);
-                    //当前任务完成，值-1
-                    countDownLatch.countDown();
-                }
+            this.executorService.submit(() -> {
+                SmallEverythingManager.this.fileScan.index(path);
+                //当前任务完成，值-1
+                countDownLatch.countDown();
             });
         }
 
@@ -159,5 +167,23 @@ public class SmallEverythingManager {
         }else{
             System.out.println("Cant repeat start BackgroundClearThread");
         }
+    }
+
+    /**
+     * 启动文件系统监听
+     */
+    public void startFileSystemMonitor(){
+        SmallEverythingConfig config = SmallEverythingConfig.getInstance();
+        HandlePath handlePath = new HandlePath();
+        handlePath.setIncludePath(config.getIncludePath());
+        handlePath.setExcludePath(config.getExcludePath());
+        this.fileWatch.monitor(handlePath);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("文件系统监控启动");
+                fileWatch.start();
+            }
+        }).start();
     }
 }

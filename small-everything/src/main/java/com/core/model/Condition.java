@@ -6,6 +6,7 @@ import lombok.Data;
 public class Condition {
     private String name;
     private String fileType;
+
     //限制数量
     private Integer limit;
 

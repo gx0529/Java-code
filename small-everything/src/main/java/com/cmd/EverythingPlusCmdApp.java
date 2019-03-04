@@ -23,6 +23,9 @@ public class EverythingPlusCmdApp {
         //启动后台清理线程
         manager.startBackgroundClearThread();
 
+        //启动监控
+        manager.startFileSystemMonitor();
+
         //交互式
         interactive(manager);
     }
@@ -35,7 +38,7 @@ public class EverythingPlusCmdApp {
              * 处理参数
              * 如果用户指定的参数格式不对，使用默认值即可
              */
-            if(param.startsWith("--maxReturn=")){
+            if(param.startsWith(maxReturnParam)){
                 //--maxReturn=value
                 int index = param.indexOf("=");
                 String maxReturnStr = param.substring(index + 1);
@@ -139,12 +142,7 @@ public class EverythingPlusCmdApp {
 
     private static void index(SmallEverythingManager manager){
         //统一调度器中的index
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                manager.buildIndex();
-            }
-        }).start();
+        new Thread(() -> manager.buildIndex()).start();
     }
     private static void quit(){
         System.out.println("再见");
