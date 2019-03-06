@@ -101,7 +101,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <!--配置主类-->
-                            <mainClass>com.bittech.Mutil.ThreadClient</mainClass>
+                            <mainClass>com.cmd.SmallEverythingCmdApp</mainClass>
                             <addExtensions>true</addExtensions>
                         </manifest>
                         <manifestEntries>

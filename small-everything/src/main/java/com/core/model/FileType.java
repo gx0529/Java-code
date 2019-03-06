@@ -19,6 +19,7 @@ public enum FileType {
      */
     private Set<String> extend = new HashSet<>();
     FileType(String... extend){
+        //将数组看做列表传入
         this.extend.addAll(Arrays.asList(extend));
     }
 
@@ -37,6 +38,7 @@ public enum FileType {
         return FileType.OTHER;
     }
 
+
     /**
      * 根据文件类型名获取文件类型对象
      * @param name
@@ -45,7 +47,7 @@ public enum FileType {
     public static FileType lookupByName(String name){
         //fileType为枚举类的文件类型
         for(FileType fileType : FileType.values()){
-            if(fileType.name().contains(name)){
+            if(fileType.name().equals(name)){
                 return fileType;
             }
         }

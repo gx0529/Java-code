@@ -9,6 +9,7 @@ public interface FileScan {
      */
     void index(String path);
 
+
     /**
      * 遍历的拦截器
      * @param interceptor

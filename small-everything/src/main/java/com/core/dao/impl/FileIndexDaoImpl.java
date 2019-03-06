@@ -79,13 +79,16 @@ public class FileIndexDaoImpl implements FileIndexDao {
             //2.准备SQL语句
             //String sql = "select name,path,depth,file_type from file_index";
 
-            //name       :like
+            //name       : like
             //filetype   : =
             //深度由浅到深
-            //limit      :limit offset
+            //limit      : limit offset
             //orderbyAsc : order by
 
             //TODO StringBuilder与StringBuffer的区别
+
+            //StringBuffer 不会被多线程共享
+
             StringBuilder sqlBuilder = new StringBuilder();
             sqlBuilder.append(" select name,path,depth,file_type from file_index ");
 
@@ -113,7 +116,7 @@ public class FileIndexDaoImpl implements FileIndexDao {
                         .append(" offset 0");
             }
 
-            System.out.println(sqlBuilder.toString());
+            //System.out.println(sqlBuilder.toString());
             //3.准备命令
             statement = connection.prepareStatement(sqlBuilder.toString());
             //4.设置参数
@@ -121,7 +124,7 @@ public class FileIndexDaoImpl implements FileIndexDao {
             resultSet = statement.executeQuery();
             //6.处理结果集
             while(resultSet.next()){
-                //数据库的中行记录 --> Java中的对象Thing
+                //数据库中的行记录 --> Java中的对象Thing
                 Thing thing = new Thing();
                 thing.setName(resultSet.getString("name"));
                 thing.setPath(resultSet.getString("path"));
@@ -163,7 +166,4 @@ public class FileIndexDaoImpl implements FileIndexDao {
         }
     }
 
-    public static void main(String[] args) {
-
-    }
 }

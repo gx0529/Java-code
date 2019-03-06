@@ -19,16 +19,21 @@ public class DataSourceFactory {
     private static volatile DruidDataSource dataSource;
 
     private DataSourceFactory() {
+
     }
 
     public static DataSource dataSource() {
         if (dataSource == null) {
             synchronized (DataSourceFactory.class) {
                 if (dataSource == null) {
+
                     //实例化
                     dataSource = new DruidDataSource();
+
                     //JDBC driver class
+                    //设置数据库数据源的驱动程序，内部通过反射
                     dataSource.setDriverClassName("org.h2.Driver");
+
                     //url,username,password
                     //采用的是H2的嵌入式数据库，数据库以本地文件的方式存储，只需提供url接口
 
@@ -37,6 +42,7 @@ public class DataSourceFactory {
                     //JDBC规范中关于H2  jdbc:h2:filepath->存储到本地文件
                     //JDBC规范中关于H2  jdbc:h2:~/filepath->存储到当前用户的home(用户)目录
                     //JDBC规范中关于H2  jdbc:h2://ip:port/databaseName -> 存储到服务器
+
                     dataSource.setUrl("jdbc:h2:" + SmallEverythingConfig
                             .getInstance().getH2IndexPath());
 
@@ -59,6 +65,9 @@ public class DataSourceFactory {
         //不采取读取绝对路径文件(如果发送给别人，则路径就会改变)
         //采取读取classpath路径下的文件
         //try-with-resources
+
+        //Class.getClassLoader.getResourceAsStream(String path) ：
+        // 默认则是从ClassPath根下获取，path不能以’/'开头，最终是由ClassLoader获取资源。
         //getResourceAsStream将资源文件转为Stream流
         try (InputStream in = DataSourceFactory.class.getClassLoader().
                 getResourceAsStream("small_everything.sql");) {

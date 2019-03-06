@@ -7,7 +7,6 @@ import com.core.dao.FileIndexDao;
 import com.core.dao.impl.FileIndexDaoImpl;
 import com.core.index.FileScan;
 import com.core.index.impl.FileScanImpl;
-import com.core.interceptor.ThingInterceptor;
 import com.core.interceptor.impl.FileIndexInterceptor;
 import com.core.interceptor.impl.ThingClearInterceptor;
 import com.core.model.Condition;
@@ -16,7 +15,6 @@ import com.core.monitor.FileWatch;
 import com.core.monitor.impl.FileWatchImpl;
 import com.core.search.FileSearch;
 import com.core.search.impl.FileSearchImpl;
-
 import javax.sql.DataSource;
 import java.io.File;
 import java.util.List;
@@ -30,6 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class SmallEverythingManager {
+
     private static volatile SmallEverythingManager manager;
 
     private FileSearch fileSearch;
@@ -44,7 +43,8 @@ public class SmallEverythingManager {
     private ThingClearInterceptor thingClearInterceptor;
     private Thread backgroundClearThread;
 
-    private AtomicBoolean backgroundClearThreadStatus = new AtomicBoolean(false);
+    private AtomicBoolean backgroundClearThreadStatus =
+            new AtomicBoolean(false);
 
     /**
      * 文件监控
@@ -54,6 +54,7 @@ public class SmallEverythingManager {
     private SmallEverythingManager(){
         this.initComponent();
     }
+
     private void initComponent(){
         //数据源对象
         DataSource dataSource = DataSourceFactory.dataSource();
@@ -66,7 +67,9 @@ public class SmallEverythingManager {
 
         //业务层对象
         FileIndexDao fileIndexDao = new FileIndexDaoImpl(dataSource);
+
         this.fileSearch = new FileSearchImpl(fileIndexDao);
+
         this.fileScan = new FileScanImpl();
 
         //Print真正发布代码不需要
@@ -78,6 +81,7 @@ public class SmallEverythingManager {
         this.backgroundClearThread = new Thread(this.thingClearInterceptor);
 
         this.backgroundClearThread.setName("Thread-Thing-Clear");
+
         this.backgroundClearThread.setDaemon(true);
 
         //FileWatch  文件监控对象
@@ -85,9 +89,12 @@ public class SmallEverythingManager {
     }
 
 
+    //在第一次使用的时候会初始化数据库，重建索引需要初始化数据库
     public void initOrResetDatabase(){
+
         DataSourceFactory.initDatabase();
     }
+
     public static SmallEverythingManager getInstance(){
         if(manager == null){
             synchronized (SmallEverythingManager.class){
@@ -103,7 +110,7 @@ public class SmallEverythingManager {
      */
     public List<Thing> search(Condition condition){
         // NOTICE扩展
-        //Stream
+        //Stream 流式处理 JDK8
         return this.fileSearch.search(condition).stream().
                 filter(thing -> {
                     String path = thing.getPath();
@@ -119,14 +126,18 @@ public class SmallEverythingManager {
     }
 
     /**
-     * 索引
+     * 索引,将文件存到数据库中
      */
     public void buildIndex(){
+
         initOrResetDatabase();
+
         Set<String> directories = SmallEverythingConfig.getInstance().getIncludePath();
         if(this.executorService == null){
-            this.executorService = Executors.newFixedThreadPool(directories.size(), new ThreadFactory() {
-                private final AtomicInteger threadId = new AtomicInteger(0);
+            this.executorService = Executors.newFixedThreadPool
+                    (directories.size(), new ThreadFactory() {
+                private final AtomicInteger threadId =
+                        new AtomicInteger(0);
                 @Override
                 public Thread newThread(Runnable r) {
                     Thread thread = new Thread(r);
@@ -139,6 +150,7 @@ public class SmallEverythingManager {
         final CountDownLatch countDownLatch = new CountDownLatch(directories.size());
 
         System.out.println("Build index start...");
+
         for(String path : directories){
             this.executorService.submit(() -> {
                 SmallEverythingManager.this.fileScan.index(path);

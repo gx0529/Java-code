@@ -51,12 +51,14 @@ public class SmallEverythingConfig {
     private SmallEverythingConfig(){
     }
 
+    //初始化默认路径配置
     private void initDefaultPathsConfig(){
-        //1.获取文件系统
+        //1.获取文件系统  windows
         FileSystem fileSystem = FileSystems.getDefault();
 
-        //遍历目录
+        //系统下的磁盘，遍历目录
         Iterable<Path> iterable = fileSystem.getRootDirectories();
+
         for (Path path : iterable) {
             config.includePath.add(path.toString());
         }
@@ -64,6 +66,8 @@ public class SmallEverythingConfig {
         //排除目录
         //windows : C:\Windows  C:\Program Files (x86)  C:\Program Files  C:\ProgramData
         //linux : /tmp  /etc
+
+        //获取操作系统
         String osname = System.getProperty("os.name");
         if(osname.startsWith("Windows")){
             config.getExcludePath().add("C:\\Windows");
@@ -73,7 +77,7 @@ public class SmallEverythingConfig {
         }else{
             config.getExcludePath().add("/tmp");
             config.getExcludePath().add("/etc");
-            config.getExcludePath().add("root");
+            config.getExcludePath().add("/root");
         }
     }
 
@@ -83,11 +87,13 @@ public class SmallEverythingConfig {
             synchronized (SmallEverythingConfig.class){
                 if(config == null){
                     config = new SmallEverythingConfig();
+                    //遍历目录和排除目录
                     config.initDefaultPathsConfig();
                 }
             }
         }
         return config;
     }
+
 }
 

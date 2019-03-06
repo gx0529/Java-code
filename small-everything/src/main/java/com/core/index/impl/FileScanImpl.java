@@ -9,7 +9,8 @@ import java.util.LinkedList;
 
 public class FileScanImpl implements FileScan {
 
-    private SmallEverythingConfig config = SmallEverythingConfig.getInstance();
+    private SmallEverythingConfig config =
+            SmallEverythingConfig.getInstance();
 
     private LinkedList<FileInterceptor> interceptors = new LinkedList<>();
 
@@ -25,6 +26,8 @@ public class FileScanImpl implements FileScan {
             if(config.getExcludePath().contains(path)){
                 return;
             }else{
+                //listFiles()方法是返回某个目录下所有文件和目录的绝对路径
+                // 返回的是File数组
                 File[] files = file.listFiles();
                 if(files != null){
                     for(File file1 : files){

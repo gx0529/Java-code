@@ -12,6 +12,7 @@ import java.util.List;
  * 业务层
  */
 public class FileSearchImpl implements FileSearch {
+
     private final FileIndexDao fileIndexDao;
 
     public FileSearchImpl(FileIndexDao fileIndexDao) {
