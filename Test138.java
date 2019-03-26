@@ -1,4 +1,3 @@
-
 package www.bit.java;
 
 import java.util.Scanner;
@@ -16,16 +15,8 @@ class Student{
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Integer getScore() {
         return score;
-    }
-
-    public void setScore(Integer score) {
-        this.score = score;
     }
 }
 
@@ -40,8 +31,9 @@ public class Test3 {
             int m = Integer.parseInt(scanner.nextLine());
             Student[] students = new Student[N];
             for(int i=0; i<N; i++){
-                String name = scanner.nextLine().split(" ")[0];
-                Integer age = Integer.parseInt(scanner.nextLine().split(" ")[1]);
+                String str = scanner.nextLine();
+                String name = str.split(" ")[0];
+                Integer age = Integer.parseInt(str.split(" ")[1]);
                 Student stu = new Student(name,age);
                 students[i] = stu;
             }
