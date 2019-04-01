@@ -1,5 +1,4 @@
-package Nvk;
-
+﻿
 import Node.List;
 
 import java.util.HashMap;
