@@ -1,4 +1,4 @@
-package Nvk;
+﻿package Nvk;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,5 +40,25 @@ public class opposite {
         }
         result = result.trim();
         System.out.println(result);
+    }
+}
+
+
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if(scanner.hasNext()){
+            String str = scanner.nextLine();
+            String[] strs = str.split(" ");
+            StringBuilder temp = new StringBuilder();
+            for(int i=strs.length-1; i>0; i--){
+                temp.append(strs[i]).append(" ");
+            }
+            temp.append(strs[0]);
+            System.out.println(temp.toString());
+        }
     }
 }
