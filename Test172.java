@@ -1,3 +1,4 @@
+﻿
 package Nvk;
 
 import java.util.Scanner;
