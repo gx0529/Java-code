@@ -45,3 +45,46 @@ public class Main {
         System.out.println(findKth(a,5,3));
     }
 }
+
+
+
+import java.util.*;
+
+public class Finder {
+    public int findKth(int[] a, int n, int K) {
+        return findKth(a, 0, n-1, K);
+    }
+    public int findKth(int[] a, int left, int right, int K){
+        int data = standard(a, left, right);
+        if(K == right-data+1){
+            return a[data];
+        }else if(K > right-data+1){
+            return findKth(a, left, data-1, K-right+data-1);
+        }else{
+            return findKth(a, data+1, right, K);
+        }
+    }
+    public int standard(int[] a, int left, int right){
+        int begin = left;
+        int end = right;
+        int key = a[right];
+        while(begin < end){
+            while(begin<end && a[begin]<=key){
+                begin++;
+            }
+            if(begin == end){
+                break;
+            }
+            a[end] = a[begin];
+            while(begin<end && a[end]>key){
+                end--;
+            }
+            if(begin == end){
+                break;
+            }
+            a[begin] = a[end];
+        }
+        a[begin] = key;
+        return begin;
+    }
+}
